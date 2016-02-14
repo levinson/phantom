@@ -46,7 +46,50 @@ class CreateTest extends PhantomFreeSuite {
 
         info(query.queryString)
 
-        whenReady(query.future()) {
+        val chain = for {
+          drop <- TestDatabase.timeSeriesTable.alter.drop().future()
+          create <- query.future()
+        } yield create
+
+        whenReady(chain) {
+          res => {
+            res.wasApplied() shouldEqual true
+          }
+        }
+      }
+
+      "serialize and create a table with Caching.KeysOnly" in {
+
+        val query = TestDatabase.timeSeriesTable
+          .create.`with`(caching eqs Caching.KeysOnly)
+
+        info(query.queryString)
+
+        val chain = for {
+          drop <- TestDatabase.timeSeriesTable.alter.drop().future()
+          create <- query.future()
+        } yield create
+
+        whenReady(chain) {
+          res => {
+            res.wasApplied() shouldEqual true
+          }
+        }
+      }
+
+      "serialize and create a table with Caching.RowsOnly" in {
+
+        val query = TestDatabase.timeSeriesTable
+          .create.`with`(caching eqs Caching.RowsOnly)
+
+        info(query.queryString)
+
+        val chain = for {
+          drop <- TestDatabase.timeSeriesTable.alter.drop().future()
+          create <- query.future()
+        } yield create
+
+        whenReady(chain) {
           res => {
             res.wasApplied() shouldEqual true
           }
@@ -59,7 +102,12 @@ class CreateTest extends PhantomFreeSuite {
 
         info(query.queryString)
 
-        whenReady(query.future()) {
+        val chain = for {
+          drop <- TestDatabase.timeSeriesTable.alter.drop().future()
+          create <- query.future()
+        } yield create
+
+        whenReady(chain) {
           res => {
             res.wasApplied() shouldEqual true
           }
