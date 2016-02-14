@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Websudos, Limited.
+ * Copyright 2013-2016 Websudos, Limited.
  *
  * All rights reserved.
  *
@@ -27,10 +27,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.websudos.phantom.builder.ops
+package com.websudos.phantom.builder.query.db.crud
 
-import org.scalatest.{Matchers, FlatSpec}
+import com.websudos.phantom.PhantomFreeSuite
+import com.websudos.phantom.builder.query.Caching
+import com.websudos.phantom.tables.TestDatabase
+import com.websudos.phantom.dsl._
 
-class OperatorsTest extends FlatSpec with Matchers {
+class CreateTest extends PhantomFreeSuite {
+
+  "The create query builder" - {
+
+    "should generate CQL queries for custom caching properties" - {
+      "serialize and create a table with Caching.None" in {
+
+        val query = TestDatabase.timeSeriesTable
+          .create.`with`(caching eqs Caching.None)
+
+        info(query.queryString)
+
+        whenReady(query.future()) {
+          res => {
+            res.wasApplied() shouldEqual true
+          }
+        }
+      }
+
+      "serialize and create a table with Caching.All" in {
+        val query = TestDatabase.timeSeriesTable
+          .create.`with`(caching eqs Caching.All)
+
+        info(query.queryString)
+
+        whenReady(query.future()) {
+          res => {
+            res.wasApplied() shouldEqual true
+          }
+        }
+      }
+    }
+
+  }
 
 }

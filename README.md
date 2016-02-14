@@ -101,13 +101,13 @@ Scala/Cassandra users in the world rely on phantom.
 * Bartosz Jankiewicz ([@bjankie1](https://github.com/bjankie1))
 * Benjamin Edwards ([@benjumanji](https://github.com/benjumanji))
 * Eugene Zhulenev ([@ezhulenev](https://github.com/ezhulenev))
+* Michal Matloka ([@mmatloka](https://github.com/mmatloka))
 * Juan José Vázquez ([@juanjovazquez](https://github.com/juanjovazquez))
 * Viktor Taranenko ([@viktortnk](https://github.com/viktortnk))
-* Jens Halm ([@jenshalm](https://github.com/jenshalm))
 * Stephen Samuel ([@sksamuel](https://github.com/sksamuel))
 * Tomasz Perek ([@tperek](https://github.com/tperek))
 * Evan Chan ([@evanfchan](https://github.com/evanfchan))
-
+* Jens Halm ([@jenshalm](https://github.com/jenshalm))
 
 <a id="copyright">Copyright</a>
 ===============================
@@ -115,7 +115,7 @@ Scala/Cassandra users in the world rely on phantom.
 
 Special thanks to Viktor Taranenko from WhiskLabs, who gave us the original idea.
 
-Copyright &copy; 2013 - 2015 websudos.
+Copyright &copy; 2013 - 2016 websudos.
 
 
 Contributing to phantom

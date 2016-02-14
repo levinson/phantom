@@ -341,3 +341,8 @@ removed `session.newSimpleStatement`.
 - #414 Added ablity to use prepared statements inside of batch statemets.
 - #417 Corrected cql type for LocalDate and Date accessor method.
 - #412 Bumped Datastax Java Driver version to 3.0.0
+
+<a id="version-1.21.5">1.21.5</a>
+================================
+- Added SmallInt and TinyInt support.
+- Added a new contributor to the list.
