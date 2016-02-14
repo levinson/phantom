@@ -42,7 +42,7 @@ import scala.concurrent.duration._
 
 class BatchSubscriberIntegrationTest extends FlatSpec with StreamTest with ScalaFutures {
 
-  implicit val defaultPatience = PatienceConfig(timeout = 3.seconds, interval = 50.millis)
+  implicit val defaultPatience = PatienceConfig(timeout = 10.seconds, interval = 50.millis)
 
   override def beforeAll(): Unit = {
     super.beforeAll()
