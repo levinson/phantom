@@ -33,6 +33,7 @@ import java.util.UUID
 
 import com.datastax.driver.core.{ResultSet, Row}
 import com.twitter.conversions.time._
+import com.websudos.phantom.Manager
 import com.websudos.phantom.dsl._
 import com.websudos.phantom.example.basics.Recipe
 import org.joda.time.DateTime
@@ -48,6 +49,10 @@ import scala.concurrent.{Future => ScalaFuture}
 // The companion object is where you would implement your custom methods.
 // Keep reading for examples.
 sealed class AdvancedRecipes extends CassandraTable[ConcreteAdvancedRecipes, Recipe] {
+
+  implicit val executor = Manager.executor
+  implicit val context = Manager.scalaExecutor
+
   // First the partition key, which is also a Primary key in Cassandra.
   object id extends  UUIDColumn(this) with PartitionKey[UUID] {
     // You can override the name of your key to whatever you like.

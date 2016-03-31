@@ -32,6 +32,7 @@ package com.websudos.phantom.example.advanced
 import java.util.UUID
 
 import com.datastax.driver.core.{ResultSet, Row}
+import com.websudos.phantom.Manager
 import com.websudos.phantom.dsl._
 
 import scala.concurrent.{Future => ScalaFuture}
@@ -44,6 +45,9 @@ import scala.concurrent.{Future => ScalaFuture}
 // Instead, you create mapping tables and ensure consistency from the application level.
 // This will illustrate just how easy it is to do that with com.websudos.phantom.
 sealed class AdvancedRecipesByTitle extends CassandraTable[ConcreteAdvancedRecipesByTitle, (String, UUID)] {
+
+  implicit val executor = Manager.executor
+  implicit val context = Manager.scalaExecutor
 
   // In this table, the author will be PrimaryKey and PartitionKey.
   object title extends StringColumn(this) with PartitionKey[String]

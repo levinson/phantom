@@ -186,8 +186,6 @@ package object dsl extends ImplicitMechanism with CreateImplicits
     new TokenConstructor(Seq(Primitive[RR].asCql(value)))
   }
 
-  implicit lazy val context = Manager.scalaExecutor
-
   implicit class PartitionTokenHelper[T](val p: Column[_, _, T] with PartitionKey[T]) extends AnyVal {
 
     def ltToken (value: T): WhereClause.Condition = {

@@ -30,8 +30,10 @@
 package com.websudos.phantom.example.basics
 
 import java.util.UUID
-import scala.concurrent.{ Future => ScalaFuture }
+
+import scala.concurrent.{Future => ScalaFuture}
 import com.datastax.driver.core.Row
+import com.websudos.phantom.Manager
 import com.websudos.phantom.dsl._
 
 /**
@@ -43,6 +45,10 @@ import com.websudos.phantom.dsl._
 // The companion object is where you would implement your custom methods.
 // Keep reading for examples.
 sealed class SecondaryKeyRecipes extends CassandraTable[ConcreteSecondaryKeyRecipes, Recipe] {
+
+  implicit val executor = Manager.executor
+  implicit val context = Manager.scalaExecutor
+
   // First the partition key, which is also a Primary key in Cassandra.
   object id extends  UUIDColumn(this) with PartitionKey[UUID] {
     // You can override the name of your key to whatever you like.

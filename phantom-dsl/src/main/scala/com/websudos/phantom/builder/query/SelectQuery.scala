@@ -30,6 +30,8 @@
 package com.websudos.phantom.builder.query
 
 
+import java.util.concurrent.Executor
+
 import com.datastax.driver.core.{ConsistencyLevel, Row, Session}
 import com.twitter.util.{Future => TwitterFuture}
 import com.websudos.phantom.CassandraTable
@@ -278,11 +280,11 @@ class SelectQuery[
   /**
    * Returns the first row from the select ignoring everything else
    * @param session The Cassandra session in use.
-   * @param ctx The Execution Context.
    * @return
    */
   @implicitNotFound("You have already defined limit on this Query. You cannot specify multiple limits on the same builder.")
-  def one()(implicit session: Session, ctx: ExecutionContext, keySpace: KeySpace, ev: Limit =:= Unlimited): ScalaFuture[Option[Record]] = {
+  def one()(
+      implicit session: Session, keySpace: KeySpace, ev: Limit =:= Unlimited, executor: Executor, context: ExecutionContext): ScalaFuture[Option[Record]] = {
     val enforceLimit = if (count) LimitedPart.empty else limitedPart append QueryBuilder.limit(1)
 
     new SelectQuery(

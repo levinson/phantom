@@ -29,6 +29,7 @@
  */
 package com.websudos.phantom.builder.query.db.iteratee
 
+import com.websudos.phantom.Manager
 import com.websudos.phantom.dsl._
 import com.websudos.phantom.iteratee.Iteratee
 import com.websudos.phantom.tables.{JodaRow, TestDatabase}
@@ -39,6 +40,9 @@ import org.scalatest.time.SpanSugar._
 import scala.concurrent.{Await, Future}
 
 class IterateeBenchmarkPerformanceTest extends PerformanceTest.Quickbenchmark with TestDatabase.connector.Connector {
+
+  implicit val javaExecutor = Manager.executor
+  implicit val scalaExecutor = Manager.scalaExecutor
 
   TestDatabase.primitivesJoda.insertSchema()
 

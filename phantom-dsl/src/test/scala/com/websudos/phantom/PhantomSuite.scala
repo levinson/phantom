@@ -54,6 +54,10 @@ trait PhantomBaseSuite extends Suite with Matchers
   implicit val defaultTimeout: PatienceConfiguration.Timeout = timeout(10.seconds)
 
   implicit val defaultPatience = PatienceConfig(timeout = 5.seconds, interval = 50.millis)
+
+  implicit val executor = Manager.executor
+
+  implicit val context = Manager.scalaExecutor
 }
 
 trait PhantomSuite extends FlatSpec with PhantomBaseSuite with TestDatabase.connector.Connector {

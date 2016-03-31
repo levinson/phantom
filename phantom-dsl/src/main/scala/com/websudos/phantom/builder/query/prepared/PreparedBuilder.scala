@@ -30,9 +30,10 @@
 package com.websudos.phantom.builder.query.prepared
 
 import java.util.UUID
+import java.util.concurrent.Executor
 
-import com.datastax.driver.core.{ QueryOptions => _ , _ }
-import com.twitter.util.{ Future => TwitterFuture }
+import com.datastax.driver.core.{QueryOptions => _, _}
+import com.twitter.util.{Future => TwitterFuture}
 import com.websudos.phantom.CassandraTable
 import com.websudos.phantom.builder.{LimitBound, Unlimited}
 import com.websudos.phantom.builder.query._
@@ -42,7 +43,7 @@ import shapeless.ops.hlist.Reverse
 import shapeless.{Generic, HList}
 
 import scala.collection.JavaConverters._
-import scala.concurrent.{Future => ScalaFuture, ExecutionContext, blocking}
+import scala.concurrent.{ExecutionContext, blocking, Future => ScalaFuture}
 
 private[phantom] trait PrepareMark {
 
@@ -70,7 +71,7 @@ class ExecutablePreparedSelectQuery[
 
   override def fromRow(r: Row): R = fn(r)
 
-  override def future()(implicit session: Session, keySpace: KeySpace): ScalaFuture[ResultSet] = {
+  override def future()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[ResultSet] = {
     scalaQueryStringExecuteToFuture(st)
   }
 
@@ -83,7 +84,8 @@ class ExecutablePreparedSelectQuery[
     * @param session The Cassandra session in use.
     * @return A Scala future guaranteed to contain a single result wrapped as an Option.
     */
-  override def one()(implicit session: Session, ec: ExecutionContext, keySpace: KeySpace, ev: =:=[Limit, Unlimited]): ScalaFuture[Option[R]] = {
+  override def one()(
+      implicit session: Session, keySpace: KeySpace, ev: =:=[Limit, Unlimited], executor: Executor, context: ExecutionContext): ScalaFuture[Option[R]] = {
     singleFetch()
   }
 

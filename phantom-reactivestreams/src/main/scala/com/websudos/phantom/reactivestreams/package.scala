@@ -29,12 +29,16 @@
  */
 package com.websudos.phantom
 
+import java.util.concurrent.Executor
+
 import akka.actor.ActorSystem
 import com.websudos.phantom.batch.BatchType
 import com.websudos.phantom.dsl._
 import org.reactivestreams.Publisher
 import play.api.libs.iteratee.Enumerator
 import play.api.libs.streams.Streams
+
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.FiniteDuration
 
 /**
@@ -125,7 +129,7 @@ package object reactivestreams {
       * @param keySpace The target keyspace.
       * @return A publisher of records, publishing one record at a time.
       */
-    def publisher()(implicit session: Session, keySpace: KeySpace): Publisher[T] = {
+    def publisher()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): Publisher[T] = {
       Streams.enumeratorToPublisher(ct.select.all().fetchEnumerator())
     }
   }

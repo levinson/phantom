@@ -30,6 +30,7 @@
 package com.websudos.phantom.thrift.suites
 
 import com.datastax.driver.core.utils.UUIDs
+import com.websudos.phantom.Manager
 import com.websudos.phantom.dsl._
 import com.websudos.phantom.tables.ThriftDatabase
 import com.websudos.util.testing._

@@ -35,8 +35,6 @@ import com.websudos.phantom.dsl.Batch
 import com.websudos.phantom.tables._
 import com.websudos.util.testing._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class CountTest extends PhantomSuite {
 
   override def beforeAll(): Unit = {

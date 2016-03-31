@@ -29,6 +29,8 @@
  */
 package com.websudos.phantom.builder.query
 
+import java.util.concurrent.Executor
+
 import com.datastax.driver.core._
 import com.twitter.util.{Future => TwitterFuture}
 import com.websudos.phantom.builder._
@@ -37,7 +39,7 @@ import com.websudos.phantom.connectors.KeySpace
 import com.websudos.phantom.{CassandraTable, Manager}
 
 import scala.annotation.implicitNotFound
-import scala.concurrent.{ ExecutionContext, Future => ScalaFuture}
+import scala.concurrent.{ExecutionContext, Future => ScalaFuture}
 
 class RootCreateQuery[
   Table <: CassandraTable[Table, _],
@@ -189,9 +191,7 @@ class CreateQuery[
     })
   }
 
-  override def future()(implicit session: Session, keySpace: KeySpace): ScalaFuture[ResultSet] = {
-
-    implicit val ex: ExecutionContext = Manager.scalaExecutor
+  override def future()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[ResultSet] = {
 
     if (table.secondaryKeys.isEmpty) {
       scalaQueryStringExecuteToFuture(new SimpleStatement(qb.terminate().queryString))

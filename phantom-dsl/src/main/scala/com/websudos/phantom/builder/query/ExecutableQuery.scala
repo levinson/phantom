@@ -29,6 +29,7 @@
  */
 package com.websudos.phantom.builder.query
 
+import java.util.concurrent.Executor
 import java.util.{List => JavaList}
 
 import com.datastax.driver.core._
@@ -71,7 +72,7 @@ trait ExecutableStatement extends CassandraOperations {
     * @param keySpace The implicit keySpace definition provided by a [[com.websudos.phantom.connectors.Connector]].
     * @return
     */
-  def future()(implicit session: Session, keySpace: KeySpace): ScalaFuture[ResultSet] = {
+  def future()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[ResultSet] = {
     scalaQueryStringExecuteToFuture(statement)
   }
 
@@ -90,7 +91,8 @@ trait ExecutableStatement extends CassandraOperations {
     * @param keySpace The implicit keySpace definition provided by a [[com.websudos.phantom.connectors.Connector]].
     * @return
     */
-  def future(modifyStatement : Statement => Statement)(implicit session: Session, keySpace: KeySpace): ScalaFuture[ResultSet] = {
+  def future(modifyStatement : Statement => Statement)(
+      implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[ResultSet] = {
     scalaQueryStringExecuteToFuture(modifyStatement(statement))
   }
 
@@ -136,7 +138,7 @@ private[phantom] class ExecutableStatementList(val list: Seq[CQLQuery]) extends 
     ++(st.list)
   }
 
-  def future()(implicit session: Session, keySpace: KeySpace, ex: ExecutionContext): ScalaFuture[Seq[ResultSet]] = {
+  def future()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[Seq[ResultSet]] = {
     ScalaFuture.sequence(list.map(item => scalaQueryStringExecuteToFuture(new SimpleStatement(item.terminate().queryString))))
   }
 
@@ -163,7 +165,7 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound] extends
     List.tabulate(results.size())(index => fromRow(results.get(index)))
   }
 
-  private[phantom] def singleFetch()(implicit session: Session, context: ExecutionContext, keySpace: KeySpace): ScalaFuture[Option[R]] = {
+  private[phantom] def singleFetch()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[Option[R]] = {
     future() map { res => singleResult(res.one) }
   }
 
@@ -175,10 +177,9 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound] extends
    * Produces an Enumerator for [R]ows
    * This enumerator can be consumed afterwards with an Iteratee
    * @param session The Cassandra session in use.
-   * @param ctx The Execution Context.
    * @return
    */
-  def fetchEnumerator()(implicit session: Session, ctx: ExecutionContext, keySpace: KeySpace): PlayEnumerator[R] = {
+  def fetchEnumerator()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): PlayEnumerator[R] = {
     val eventualEnum = future() map {
       resultSet => {
           Enumerator.enumerator(resultSet) through Enumeratee.map(r => fromRow(r))
@@ -205,7 +206,7 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound] extends
    * @param session The Cassandra session in use.
    * @return A Scala future guaranteed to contain a single result wrapped as an Option.
    */
-  def one()(implicit session: Session,  ec: ExecutionContext, keySpace: KeySpace, ev: Limit =:= Unlimited): ScalaFuture[Option[R]]
+  def one()(implicit session: Session, keySpace: KeySpace, ev: Limit =:= Unlimited, ec: Executor, context: ExecutionContext): ScalaFuture[Option[R]]
 
   /**
    * Get the result of an operation as a Twitter Future.
@@ -218,20 +219,18 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound] extends
    * Returns a parsed sequence of [R]ows
    * This is not suitable for big results set
    * @param session The Cassandra session in use.
-   * @param ec The Execution Context.
    * @return A Scala future wrapping a list of mapped results.
    */
-  def fetch()(implicit session: Session, ec: ExecutionContext, keySpace: KeySpace): ScalaFuture[List[R]] = {
+  def fetch()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[List[R]] = {
     future() map { resultSet => { directMapper(resultSet.all) } }
   }
 
   /**
    * Returns a parsed iterator of [R]ows
    * @param session The Cassandra session in use.
-   * @param ec The Execution Context.
    * @return A Scala future wrapping scala iterator of mapped results.
    */
-  def iterator()(implicit session: Session, ec: ExecutionContext, keySpace: KeySpace): ScalaFuture[Iterator[R]] = {
+  def iterator()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[Iterator[R]] = {
     future() map { _.iterator().asScala.map(fromRow) }
   }
 

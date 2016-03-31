@@ -29,10 +29,12 @@
  */
 package com.websudos.phantom
 
+import java.util.concurrent.Executor
+
 import com.websudos.phantom.connectors.KeySpace
 
-import scala.concurrent.{Future => ScalaFuture, ExecutionContext}
-import com.datastax.driver.core.{Session, ResultSet}
+import scala.concurrent.{ExecutionContext, Future => ScalaFuture}
+import com.datastax.driver.core.{ResultSet, Session}
 import com.twitter.util.Future
 
 package object udt {
@@ -76,7 +78,8 @@ package object udt {
       UDTCollector.execute()
     }
 
-    def udtFuture()(implicit session: Session, ec: ExecutionContext, keySpace: KeySpace): ScalaFuture[Seq[ResultSet]] = {
+    def udtFuture()(
+        implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[Seq[ResultSet]] = {
       UDTCollector.future()
     }
   }

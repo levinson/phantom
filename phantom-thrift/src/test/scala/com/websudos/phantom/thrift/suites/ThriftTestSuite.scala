@@ -29,11 +29,13 @@
  */
 package com.websudos.phantom.thrift.suites
 
+import com.websudos.phantom.Manager
 import com.websudos.phantom.tables.ThriftDatabase
 import com.websudos.util.testing._
 import org.scalatest.concurrent.PatienceConfiguration
+
 import scala.concurrent.duration._
-import org.scalatest.{OptionValues, Matchers, BeforeAndAfterAll, Suite}
+import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, Suite}
 
 trait ThriftTestSuite extends Suite
   with BeforeAndAfterAll
@@ -41,4 +43,8 @@ trait ThriftTestSuite extends Suite
   with OptionValues
   with ThriftDatabase.connector.Connector {
   implicit val s: PatienceConfiguration.Timeout = timeout(10 seconds)
+
+  implicit val javaExecutor = Manager.executor
+
+  implicit val scalaExecutor = Manager.scalaExecutor
 }

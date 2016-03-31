@@ -30,12 +30,13 @@
 package com.websudos.phantom.udt
 
 import java.util.Date
+import java.util.concurrent.Executor
 
-import com.datastax.driver.core.{ QueryOptions => _, _ }
+import com.datastax.driver.core.{QueryOptions => _, _}
 import com.twitter.util.Future
 import com.websudos.phantom.CassandraTable
 import com.websudos.phantom.builder.primitives.Primitive
-import com.websudos.phantom.builder.query.{QueryOptions, CQLQuery, ExecutableStatement}
+import com.websudos.phantom.builder.query.{CQLQuery, ExecutableStatement, QueryOptions}
 import com.websudos.phantom.dsl.{Column, KeySpace}
 
 import scala.collection.mutable.{ArrayBuffer => MutableArrayBuffer}
@@ -116,7 +117,8 @@ private[udt] object UDTCollector {
    * @param session The Cassandra database connection session.
    * @return
    */
-  def future()(implicit session: Session, ec: ExecutionContext, keySpace: KeySpace): ScalaFuture[Seq[ResultSet]] = {
+  def future()(
+      implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[Seq[ResultSet]] = {
     ScalaFuture.sequence(_udts.toSeq.map(_.create().future()))
   }
 
@@ -226,7 +228,7 @@ sealed class UDTCreateQuery(val qb: CQLQuery, udt: UDTDefinition[_], override va
     twitterQueryStringExecuteToFuture(new SimpleStatement(udt.schema()))
   }
 
-  override def future()(implicit session: Session, keySpace: KeySpace): ScalaFuture[ResultSet] = {
+  override def future()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): ScalaFuture[ResultSet] = {
     scalaQueryStringExecuteToFuture(new SimpleStatement(udt.schema()))
   }
 }

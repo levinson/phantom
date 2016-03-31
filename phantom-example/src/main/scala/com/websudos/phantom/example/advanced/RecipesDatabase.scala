@@ -29,6 +29,7 @@
  */
 package com.websudos.phantom.example.advanced
 
+import com.websudos.phantom.Manager
 import com.websudos.phantom.connectors.{ContactPoint, KeySpaceDef}
 import com.websudos.phantom.dsl._
 import com.websudos.phantom.example.basics._
@@ -45,6 +46,9 @@ import scala.concurrent.{Future => ScalaFuture}
 // To keep all the complexity away from other parts of the application.
 
 class RecipesDatabase(override val connector: KeySpaceDef) extends Database(connector) {
+
+  implicit val executor = Manager.executor
+  implicit val context = Manager.scalaExecutor
 
   object Recipes extends ConcreteRecipes with connector.Connector
   object AdvancedRecipes extends ConcreteAdvancedRecipes with connector.Connector

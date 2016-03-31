@@ -30,6 +30,7 @@
 package com.websudos.phantom.builder.query.db.iteratee
 
 import com.twitter.util.{Await => TwitterAwait}
+import com.websudos.phantom.Manager
 import com.websudos.phantom.dsl._
 import com.websudos.phantom.tables.{JodaRow, TestDatabase}
 import com.websudos.util.testing._
@@ -40,6 +41,9 @@ import scala.concurrent.{Await, Future}
 
 
 class SpoolBenchmarkPerformanceTest extends PerformanceTest.Quickbenchmark with TestDatabase.connector.Connector {
+
+  implicit val javaExecutor = Manager.executor
+  implicit val scalaExecutor = Manager.scalaExecutor
 
   TestDatabase.primitivesJoda.insertSchema()
 

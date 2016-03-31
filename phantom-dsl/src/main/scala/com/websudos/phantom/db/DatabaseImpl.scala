@@ -29,6 +29,8 @@
  */
 package com.websudos.phantom.db
 
+import java.util.concurrent.Executor
+
 import com.datastax.driver.core.{ResultSet, Session}
 import com.twitter.util.{Future => TwitterFuture}
 import com.websudos.phantom.CassandraTable
@@ -130,7 +132,7 @@ abstract class DatabaseImpl(val connector: KeySpaceDef) {
 
 sealed class ExecutableCreateStatementsList(tables: Set[CassandraTable[_, _]]) {
 
-  def future()(implicit session: Session, keySpace: KeySpace, ec: ExecutionContext): Future[Seq[ResultSet]] = {
+  def future()(implicit session: Session, keySpace: KeySpace, executor: Executor, context: ExecutionContext): Future[Seq[ResultSet]] = {
     Future.sequence(tables.toSeq.map(_.create.ifNotExists().future()))
   }
 

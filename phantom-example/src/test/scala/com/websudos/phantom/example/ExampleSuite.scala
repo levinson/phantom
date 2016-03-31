@@ -29,7 +29,7 @@
  */
 package com.websudos.phantom.example
 
-import com.websudos.phantom.Manager._
+import com.websudos.phantom.Manager
 import com.websudos.phantom.connectors.RootConnector
 import com.websudos.phantom.example.advanced.RecipesDatabase
 import com.websudos.util.lift.{DateTimeSerializer, UUIDSerializer}
@@ -48,6 +48,10 @@ trait BaseSuite extends Suite with Matchers
   implicit val defaultTimeout: PatienceConfiguration.Timeout = timeout(10 seconds)
 
   implicit val formats = net.liftweb.json.DefaultFormats + new UUIDSerializer + new DateTimeSerializer
+
+  implicit val executor = Manager.executor
+
+  implicit val context = Manager.scalaExecutor
 }
 
 

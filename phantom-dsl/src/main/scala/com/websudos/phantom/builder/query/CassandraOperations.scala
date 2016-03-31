@@ -29,6 +29,8 @@
  */
 package com.websudos.phantom.builder.query
 
+import java.util.concurrent.Executor
+
 import com.datastax.driver.core.{ProtocolVersion, ResultSet, Session, Statement}
 import com.google.common.util.concurrent.{FutureCallback, Futures}
 import com.twitter.util.{Future => TwitterFuture, Promise => TwitterPromise, Return, Throw}
@@ -53,11 +55,13 @@ private[phantom] trait SessionAugmenter {
 
 private[phantom] trait CassandraOperations extends SessionAugmenter {
 
-  protected[this] def scalaQueryStringExecuteToFuture(st: Statement)(implicit session: Session, keyspace: KeySpace): ScalaFuture[ResultSet] = {
+  protected[this] def scalaQueryStringExecuteToFuture(st: Statement)(
+      implicit session: Session, keyspace: KeySpace, executor: Executor): ScalaFuture[ResultSet] = {
     scalaQueryStringToPromise(st).future
   }
 
-  protected[this] def scalaQueryStringToPromise(st: Statement)(implicit session: Session, keyspace: KeySpace): ScalaPromise[ResultSet] = {
+  protected[this] def scalaQueryStringToPromise(st: Statement)(
+      implicit session: Session, keyspace: KeySpace, executor: Executor): ScalaPromise[ResultSet] = {
     Manager.logger.debug(s"Executing query: ${st.toString}")
 
     val promise = ScalaPromise[ResultSet]()

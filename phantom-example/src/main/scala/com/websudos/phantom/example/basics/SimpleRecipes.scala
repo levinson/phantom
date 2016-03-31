@@ -30,17 +30,15 @@
 package com.websudos.phantom.example.basics
 
 import java.util.UUID
+
 import com.websudos.phantom.iteratee.Iteratee
 
-import scala.concurrent.{ Future => ScalaFuture }
-
+import scala.concurrent.{Future => ScalaFuture}
 import org.joda.time.DateTime
-
-import com.datastax.driver.core.{ ResultSet, Row }
-
+import com.datastax.driver.core.{ResultSet, Row}
 import com.websudos.phantom.dsl._
-
 import com.twitter.conversions.time._
+import com.websudos.phantom.Manager
 
 /**
  * In this example we will create a simple table storing recipes.
@@ -66,6 +64,10 @@ case class Recipe(
 // The companion object is where you would implement your custom methods.
 // Keep reading for examples.
 sealed class Recipes extends CassandraTable[Recipes, Recipe] {
+
+  implicit val executor = Manager.executor
+  implicit val context = Manager.scalaExecutor
+
   object id extends  UUIDColumn(this) with PartitionKey[UUID] {
     // You can override the name of your key to whatever you like.
     // The default will be the name used for the object, in this case "id".

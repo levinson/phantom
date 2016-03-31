@@ -30,6 +30,7 @@
 package com.websudos.phantom.reactivestreams.suites
 
 import akka.actor.ActorSystem
+import com.websudos.phantom.Manager
 import com.websudos.phantom.builder.query.{Batchable, ExecutableStatement, InsertQuery}
 import com.websudos.phantom.db.DatabaseImpl
 import com.websudos.phantom.dsl._
@@ -58,6 +59,10 @@ trait StreamTest extends FlatSpec with BeforeAndAfterAll
   with TestImplicits
   with StreamDatabase.connector.Connector {
   self: Suite =>
+
+  implicit val javaExecutor = Manager.executor
+
+  implicit val scalaExecutor = Manager.scalaExecutor
 
   override def beforeAll() {
     super.beforeAll()
